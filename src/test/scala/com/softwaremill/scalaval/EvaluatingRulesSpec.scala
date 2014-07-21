@@ -18,9 +18,47 @@ class EvaluatingRulesSpec extends FlatSpec with ShouldMatchers {
 
     // when
     validate(containsFive, containsThree).errors
+  }
+
+  it should "not evaluate rule when rule created" in {
+    rule("containThree") {
+      fail("This rule should not be evaluated")
+      (setToValidate.contains(3), "Set should contain element 3")
+    }
+  }
+
+  it should "evaluate rules only when validation called" in {
+    // given
+    var ruleEvaluated = false
+    val r = rule("containThree") {
+      ruleEvaluated = true
+      (setToValidate.contains(3), "Set should contain element 3")
+    }
+
+    // when
+    validate(r)
 
     // then
-    // all should be fine
+    ruleEvaluated should be(true)
+  }
+
+  it should "evaluate rules only once" in {
+    // given
+    var ruleRunCount = 0
+    val r = rule("containThree") {
+      ruleRunCount += 1
+      (setToValidate.contains(3), "Set should contain element 3")
+    }
+
+    // when
+    val result = validate(r)
+    result.errors
+    result.whenOk {
+      // noop
+    }
+
+    // then
+    ruleRunCount should be(1)
   }
 
 }
