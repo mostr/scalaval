@@ -1,7 +1,8 @@
 package com.softwaremill.scalaval
 
+
 trait Validateable {
 
-  def validate: Validation
+  def validate: Validation.Result
 
 }
