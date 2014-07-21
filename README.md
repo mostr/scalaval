@@ -60,34 +60,25 @@ Take a look at project's [specs dir](src/test/scala/com/softwaremill/scalaval) f
 Let's validate some User sign-up form object
 
 ````scala
-case class SignUpForm(userName: String, email: String, password: String, rePassword: String)
+case class SignUpForm(email: String, password: String, rePassword: String)
 
 object ScalaValExample extends App {
 
   import com.softwaremill.scalaval.Validation._
 
   // invalid email and passwords don't match
-  val form = SignUpForm("john", "john.doe.com", "secret", "secre")
+  val form = SignUpForm("john.doe.com", "secret", "secre")
 
   // define rules
-
-  val userNameReq = rule("userName")(form.userName.nonEmpty, "Username field is required")
-
-  val userNameTaken = rule("userName") {
-    val exists = false // check whether username is already taken, call DB etc
-    (exists, s"Username ${form.userName} is already taken")
-  }
-
   val emailValid = rule("email") {
     val emailOk = form.email.contains("@")  // just pretend it's enough
-    (emailOk, "Provide valid email address")
+    (emailOk, s"Provided email ${form.email} is invalid")
   }
-
   val passwordLength = rule("password")(form.password.length >= 8, "Password is too short")
-  val passwordOk = rule("password")(form.password == form.rePassword, "Passwords don't match")
+  val passwordMatch = rule("password")(form.password == form.rePassword, "Passwords don't match")
 
   // validate against rules (in order)
-  val result = validate(userNameReq, userNameTaken, emailValid, passwordLength, passwordOk).whenOk {
+  val result = validate(emailValid, passwordLength, passwordMatch).whenOk {
     // register user
     // save in DB, trigger email sending, etc
   }
