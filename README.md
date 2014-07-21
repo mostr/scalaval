@@ -2,6 +2,8 @@
 
 Dead simple validation micro library (or micro framework) for Scala.
 
+*Note: it has not been released yet. Release is coming soon*
+
 
 Why
 ---
