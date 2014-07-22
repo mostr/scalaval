@@ -6,8 +6,9 @@ object BuildSettings {
 
   val buildSettings = Defaults.coreDefaultSettings ++ Seq(
     organization := "com.softwaremill.scalaval",
-    version := "0.1-SNAPSHOT",
+    version := "0.2-SNAPSHOT",
     scalaVersion := ScalaVersion,
+    crossScalaVersions := Seq("2.10.2", "2.11.1"),
     // Sonatype OSS deployment
     publishTo := {
       val nexus = "https://oss.sonatype.org/"
@@ -16,7 +17,6 @@ object BuildSettings {
       else
         Some("releases"  at nexus + "service/local/staging/deploy/maven2")
     },
-    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     publishMavenStyle := true,
     publishArtifact in Test := false,
     pomIncludeRepository := { _ => false },
@@ -47,7 +47,7 @@ object ScalavalBuild extends Build {
     file("."),
     settings = buildSettings ++ Seq(
       libraryDependencies ++= Seq(
-        "org.scalatest" % "scalatest_2.11" % "2.2.0" % "test"
+        "org.scalatest" %% "scalatest" % "2.2.0" % "test"
       )
     )
   )
