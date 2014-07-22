@@ -1,15 +1,24 @@
 # ScalaVal
 
-Dead simple validation micro library (or micro framework) for Scala.
-
-*Note: it has not been released yet. Release is coming soon*
-
+Dead simple validation micro library (or micro framework) for Scala. 
 
 Why
 ---
 Because every project bigger than HelloWorldApp requires data validation at some point. Reinventing the structure and validation handling boilerplate every time you need one is definitely not something developers enjoy. I too had this pain when hacking on [http://codebrag.com](Codebrag).
 
 This small utility aims to provide minimal framework to write your validation logic, act as a guard between data and action and collect results in unified way. That's all it does. And it's really, really tiny. No external dependencies and no magic included. Just boilerplate.
+
+Installation
+---
+
+Current version released is 0.1. Project package is deployed to [Sonatype's OSS repository](https://oss.sonatype.org/content/repositories/snapshots/com/softwaremill/scalaval/). To use it in your project, add a dependency:
+
+````scala
+libraryDependencies += "com.softwaremill.scalaval" %% "scalaval" % "0.1"
+libraryDependencies += "com.softwaremill.scalaval" %% "scalaval" % "0.1"
+````
+
+ScalaVal works with Scala 2.10+.
 
 How-to
 ---
@@ -49,10 +58,6 @@ val checkUserNameAvailable = rule("username", haltOnFail = true) {
   (exists, s"Username ${form.userName} is already taken")
 }
 ````
-
-Requirements
----
-ScalaVal requires Scala 2.11
 
 Example usage
 ---
