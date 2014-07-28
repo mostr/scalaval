@@ -17,7 +17,7 @@ class ReportingValidationErrorsSpec extends FlatSpec with ShouldMatchers {
     val validationErrors = validate(minLength, containsFive).errors
 
     // then
-    validationErrors.flatMap(_._2) should be(List("Set should contain at least 6 elements", "Set should contain element 5"))
+    validationErrors.fieldErrors.flatMap(_._2) should be(List("Set should contain at least 6 elements", "Set should contain element 5"))
   }
 
   it should "stop on failing rule when set to stop on fail" in {
@@ -29,7 +29,7 @@ class ReportingValidationErrorsSpec extends FlatSpec with ShouldMatchers {
     val validationErrors = validate(minLength, containsFive).errors
 
     // then
-    validationErrors.flatMap(_._2) should be(List("Set should contain at least 6 elements"))
+    validationErrors.fieldErrors.flatMap(_._2) should be(List("Set should contain at least 6 elements"))
   }
 
   it should "not stop on passing rule when marked as haltOnFailed" in {
@@ -41,7 +41,7 @@ class ReportingValidationErrorsSpec extends FlatSpec with ShouldMatchers {
     val validationErrors = validate(minLength, containsFive).errors
 
     // then
-    validationErrors.flatMap(_._2) should be(List("Set should contain element 5"))
+    validationErrors.fieldErrors.flatMap(_._2) should be(List("Set should contain element 5"))
   }
 
   it should "report no errors when all rules were satisfied" in {
@@ -66,7 +66,7 @@ class ReportingValidationErrorsSpec extends FlatSpec with ShouldMatchers {
     }
 
     // then
-    result.flatMap(_._2) should be(List("Set should contain element 5"))
+    result.fieldErrors.flatMap(_._2) should be(List("Set should contain element 5"))
   }
 
   it should "return Either Right with block result when code block executes" in {
@@ -81,6 +81,20 @@ class ReportingValidationErrorsSpec extends FlatSpec with ShouldMatchers {
 
     // then
     sum should be(6)
+  }
+
+  it should "report both general and field errors" in {
+    // given
+    val minLength= rule("length")(setToValidate.size >= 10, "Set should contain at least 10 elements")
+    val containsFive = rule { (setToValidate.contains(5), "Set should contain element 5") }
+
+    // when
+    val validationErrors = validate(minLength, containsFive).errors
+
+    // then
+    validationErrors.fieldErrors.flatMap(_._2) should be(List("Set should contain at least 10 elements"))
+    validationErrors.otherErrors should be(Seq("Set should contain element 5"))
+
   }
 
 }

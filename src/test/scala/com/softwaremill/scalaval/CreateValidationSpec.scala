@@ -31,4 +31,16 @@ class CreateValidationSpec extends FlatSpec with ShouldMatchers {
     validate(allOdd)
   }
 
+  it should "create rule - different ways" in {
+    val ruleForField = rule("email")(true, "Email should be valid")
+    val ruleForFieldWithHalt = rule("email", haltOnFail = true)(true, "Email should be valid")
+    val generalRule = rule((true, "Email should be valid"))
+    val generalRuleWithBlock = rule {
+      (true, "Email should be valid")
+    }
+    val generalRuleWithHalt = rule(haltOnFail = true)(true, "Email should be valid")
+
+    validate(ruleForField, ruleForFieldWithHalt, generalRule, generalRuleWithBlock, generalRuleWithHalt)
+  }
+
 }

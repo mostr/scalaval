@@ -10,7 +10,7 @@ class EvaluatingRulesSpec extends FlatSpec with ShouldMatchers {
 
   it should "not evaluate next rule if previous failed and was set to stop on fail" in {
     // given
-    val containsFive = rule("containFive", haltOnFail = true)(setToValidate.contains(5), "Set should contain element 5")
+    val containsFive = rule(haltOnFail = true)(setToValidate.contains(5), "Set should contain element 5")
     val containsThree= rule("containThree") {
       fail("This rule should not be evaluated")
       (setToValidate.contains(3), "Set should contain element 3")
@@ -29,17 +29,23 @@ class EvaluatingRulesSpec extends FlatSpec with ShouldMatchers {
 
   it should "evaluate rules only when validation called" in {
     // given
-    var ruleEvaluated = false
-    val r = rule("containThree") {
-      ruleEvaluated = true
+    var r1Evaluated = false
+    val r1 = rule("containThree") {
+      r1Evaluated = true
+      (setToValidate.contains(3), "Set should contain element 3")
+    }
+    var r2Evaluated = false
+    val r2 = rule {
+      r2Evaluated = true
       (setToValidate.contains(3), "Set should contain element 3")
     }
 
     // when
-    validate(r)
+    validate(r1, r2)
 
     // then
-    ruleEvaluated should be(true)
+    r1Evaluated should be(true)
+    r2Evaluated should be(true)
   }
 
   it should "evaluate rules only once" in {
