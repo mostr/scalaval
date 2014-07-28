@@ -23,7 +23,7 @@ ScalaVal works with Scala 2.10+.
 How-to
 ---
 1. Define rules (in Scala code, no insane rules lang etc). 
-	- Each rule gets freely-defined "label" (usually name of field it validates)
+	- Each rule can get freely-defined "label" (usually name of field it validates) if you want to link given rule with corresponding field
  	- Returns pair: `(condition, errorMessage)`
   	- When `condition` is not met validation rule is considered as failed and `errorMessage` is collected
 2. Call `validate` and collect errors or provide optional block of code to execute when validation passes
@@ -39,8 +39,13 @@ val checkUserNameAvailable = rule("username") {
   (exists, s"Username ${form.userName} is already taken")
 }
 
+val noFieldRule = rule {
+  val isWorkday = // determine if workday
+  (isWorkday, "Come on! Leave it, enjoy your weekend")
+}
+
 // validation
-validate(checkUserNameAvailable).whenOk {
+validate(noFieldRule, checkUserNameAvailable).whenOk {
   // save user
 }
 ````
@@ -77,6 +82,12 @@ object ScalaValExample extends App {
   val form = SignUpForm("john.doe.com", "secret", "secre")
 
   // define rules
+  val workdayRule = rule {
+    // this is general rule with no particular field
+    val isWorkday = true // determine if workday
+    (isWorkday, "Come on! Leave it, enjoy your weekend")
+  }
+
   val emailValid = rule("email") {
     val emailOk = form.email.contains("@")  // just pretend it's enough
     (emailOk, s"Provided email ${form.email} is invalid")
@@ -85,14 +96,17 @@ object ScalaValExample extends App {
   val passwordMatch = rule("password")(form.password == form.rePassword, "Passwords don't match")
 
   // validate against rules (in order)
-  val result = validate(emailValid, passwordLength, passwordMatch).whenOk {
+  val result = validate(workdayRule, emailValid, passwordLength, passwordMatch).whenOk {
     // register user
     // save in DB, trigger email sending, etc
   }
 
   // handle operation result
   result match {
-    case Left(errors) => errors.flatMap(_._2).foreach(println)  // handle errors, grouped by key       
+    case Left(errors) => {
+      errors.fieldErrors.flatMap(_._2).foreach(println)  // field errors, grouped by key provided on rule definition
+      errors.otherErrors.foreach(println)                // oher errors, not linked to any particular field
+    }
     case _ => // yay! User registered, go celebrating!
   }
 
