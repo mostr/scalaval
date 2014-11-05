@@ -35,8 +35,8 @@ See full example at the bottom of the page.
 ````scala
 // rule
 val checkUserNameAvailable = rule("username") {
-  val exists = // call DB to check if user with this usename exists
-  (exists, s"Username ${form.userName} is already taken")
+  val available = // call DB to check if username is available
+  (available, s"Username ${form.userName} is already taken")
 }
 
 // validation
@@ -54,8 +54,8 @@ By default **all rules are evaluated** and all errors collected are reported. Yo
 ````scala
 // rule
 val checkUserNameAvailable = rule("username", haltOnFail = true) {
-  val exists = // call DB to check if user with this usename exists
-  (exists, s"Username ${form.userName} is already taken")
+  val available = // call DB to check if username is available
+  (available, s"Username ${form.userName} is already taken")
 }
 ````
 
