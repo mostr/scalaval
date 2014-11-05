@@ -15,7 +15,6 @@ Current version released is 0.1. Project package is deployed to [Sonatype's OSS 
 
 ````scala
 libraryDependencies += "com.softwaremill.scalaval" %% "scalaval" % "0.1"
-libraryDependencies += "com.softwaremill.scalaval" %% "scalaval" % "0.1"
 ````
 
 ScalaVal works with Scala 2.10+.
